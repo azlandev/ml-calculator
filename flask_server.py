@@ -10,14 +10,20 @@ def calculate():
     x1, x2 = request.json['x1'], request.json['x2']
     operator = request.json['operator']
     model = None
+    prediction = 0
+
     if operator == '+':
         model = load_model(os.getcwd()+'\\machine_learning\\models\\addition_model')
+        prediction = model.predict(np.array([[x1, x2]]))[0][0]
     elif operator == '-':
         model = load_model(os.getcwd()+'\\machine_learning\\models\\subtraction_model')
-    else:
-        model = None
-
-    prediction = model.predict(np.array([[x1, x2]]))[0][0]
+        prediction = model.predict(np.array([[x1, x2]]))[0][0]
+    elif operator == '×':
+        model = load_model(os.getcwd()+'\\machine_learning\\models\\multiplication_model')
+        prediction = np.exp(model.predict(np.array([[np.log(x1), np.log(x2)]]))[0])[0]
+    elif operator == '÷':
+        model = load_model(os.getcwd()+'\\machine_learning\\models\\division_model')
+        prediction = np.exp(model.predict(np.array([[np.log(x1), np.log(x2)]]))[0])[0]
 
     return {
         "x1": x1,
