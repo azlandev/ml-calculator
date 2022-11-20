@@ -143,7 +143,7 @@ def train_division(train_dataset, test_dataset, train_data, test_data):
         validation_data=(test_normalized, test_target_normalized)
     )
 
-    div_model.save('models/division_model')
+    # div_model.save('models/division_model')
 
 if __name__ == "__main__":
     #train_dataset = data.Data()
@@ -159,4 +159,4 @@ if __name__ == "__main__":
     #train_addition(train_dataset, test_dataset, train_data, test_data)
     #train_subtraction(train_dataset, test_dataset, train_data, test_data)
     #train_multiplication(train_dataset, test_dataset, train_data, test_data)
-    train_division(train_dataset, test_dataset, train_data, test_data)
+    #train_division(train_dataset, test_dataset, train_data, test_data)
