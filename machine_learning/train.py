@@ -1,14 +1,20 @@
 import data
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental import preprocessing
 
-def train_addition(train_dataset, test_dataset, train_data, test_data, normalizer):
+def train_addition(train_dataset, test_dataset, train_data, test_data):
     # get addition results from datasets
     add_target = train_dataset.get_y_add()
     test_add_target = test_dataset.get_y_add()
+
+    # adapt normalizer to x values
+    normalizer = preprocessing.Normalization()
+    normalizer.adapt(train_data)
 
     # addition model follows linear regression
     add_model = tf.keras.models.Sequential([
@@ -18,7 +24,7 @@ def train_addition(train_dataset, test_dataset, train_data, test_data, normalize
     add_model.summary()
 
     loss = tf.keras.losses.MeanAbsoluteError()
-    optim = tf.keras.optimizers.Adam(lr=0.1)
+    optim = tf.keras.optimizers.Adam(learning_rate=0.1)
 
     add_model.compile(optimizer=optim, loss=loss)
 
@@ -32,10 +38,14 @@ def train_addition(train_dataset, test_dataset, train_data, test_data, normalize
 
     # add_model.save('models/addition_model')
 
-def train_subtraction(train_dataset, test_dataset, train_data, test_data, normalizer):
+def train_subtraction(train_dataset, test_dataset, train_data, test_data):
     # get subtraction results from datasets
     sub_target = train_dataset.get_y_sub()
     test_sub_target = test_dataset.get_y_sub()
+
+    # adapt normalizer to x values
+    normalizer = preprocessing.Normalization()
+    normalizer.adapt(train_data)
 
     # subtraction model follows linear regression
     sub_model = tf.keras.models.Sequential([
@@ -45,7 +55,7 @@ def train_subtraction(train_dataset, test_dataset, train_data, test_data, normal
     sub_model.summary()
 
     loss = tf.keras.losses.MeanAbsoluteError()
-    optim = tf.keras.optimizers.Adam(lr=0.1)
+    optim = tf.keras.optimizers.Adam(learning_rate=0.1)
 
     sub_model.compile(optimizer=optim, loss=loss)
 
@@ -59,41 +69,81 @@ def train_subtraction(train_dataset, test_dataset, train_data, test_data, normal
 
     # sub_model.save('models/subtraction_model')
 
-def train_multiplication(train_dataset, test_dataset, train_data, test_data, normalizer):
+def train_multiplication(train_dataset, test_dataset, train_data, test_data):
     # get multiplication results from datasets
-    mul_target = train_dataset.get_y_mul()
-    test_mul_target = test_dataset.get_y_mul()
+    mul_target = np.abs(train_dataset.get_y_mul())
+    test_mul_target = np.abs(test_dataset.get_y_mul())
+
+    # convert data to positive
+    train_data = np.abs(train_data)
+    test_data = np.abs(test_data)
+
+    # normalize data using log normalization
+    train_normalized = np.log(train_data)
+    test_normalized = np.log(test_data)
+    target_normalized = np.log(mul_target)
+    test_target_normalized = np.log(test_mul_target)
+    normalizer = preprocessing.Normalization()
+    normalizer.adapt(train_normalized)
 
     mul_model = tf.keras.models.Sequential([
         normalizer,
-        layers.Dense(units=200, input_dim=1),
-        layers.Activation('relu'),
-        layers.Dense(units=45),
-        layers.Activation('relu'),
         layers.Dense(units=1)
     ])
     mul_model.summary()
 
     loss = tf.keras.losses.MeanAbsoluteError()
-    optim = tf.keras.optimizers.Adam(lr=0.01)
+    optim = tf.keras.optimizers.Adam(learning_rate=0.001)
 
     mul_model.compile(optimizer=optim, loss=loss)
 
     mul_model.fit(
-        train_data,
-        mul_target,
-        epochs=1000,
+        train_normalized,
+        target_normalized,
+        epochs=50,
         verbose=1,
-        validation_data=(test_data, test_mul_target)
+        validation_data=(test_normalized, test_target_normalized)
     )
 
+    # mul_model.save('models/multiplication_model')
 
-def predict(model):
-    prediction = model.predict(np.array([[2,2],[500, 200],[-32, 32],[100000, 5000000]]))
-    f = open("prediction.txt", "w")
-    for i in prediction:
-        f.write(i[0].astype('str') + '\n')
-    f.close()
+def train_division(train_dataset, test_dataset, train_data, test_data):
+    # get division results from datasets
+    div_target = np.abs(train_dataset.get_y_div())
+    test_div_target = np.abs(test_dataset.get_y_div())
+
+    # convert data to positive
+    train_data = np.abs(train_data)
+    test_data = np.abs(test_data)
+
+    # normalize data using log normalization
+    train_normalized = np.log(train_data)
+    test_normalized = np.log(test_data)
+    target_normalized = np.log(div_target)
+    test_target_normalized = np.log(test_div_target)
+    normalizer = preprocessing.Normalization()
+    normalizer.adapt(train_normalized)
+
+    div_model = tf.keras.models.Sequential([
+        normalizer,
+        layers.Dense(units=1)
+    ])
+    div_model.summary()
+
+    loss = tf.keras.losses.MeanAbsoluteError()
+    optim = tf.keras.optimizers.Adam(learning_rate=0.001)
+
+    div_model.compile(optimizer=optim, loss=loss)
+
+    div_model.fit(
+        train_normalized,
+        target_normalized,
+        epochs=20,
+        verbose=1,
+        validation_data=(test_normalized, test_target_normalized)
+    )
+
+    div_model.save('models/division_model')
 
 if __name__ == "__main__":
     #train_dataset = data.Data()
@@ -106,10 +156,7 @@ if __name__ == "__main__":
     test_dataset = data.Data('datasets/test_dataset.npy')
     test_data = test_dataset.get_x()
 
-    # adapt normalizer to x values
-    normalizer = preprocessing.Normalization()
-    normalizer.adapt(train_data)
-
-    #train_addition(train_dataset, test_dataset, train_data, test_data, normalizer)
-    train_subtraction(train_dataset, test_dataset, train_data, test_data, normalizer)
-    #train_multiplication(train_dataset, test_dataset, train_data, test_data, normalizer)
+    #train_addition(train_dataset, test_dataset, train_data, test_data)
+    #train_subtraction(train_dataset, test_dataset, train_data, test_data)
+    #train_multiplication(train_dataset, test_dataset, train_data, test_data)
+    train_division(train_dataset, test_dataset, train_data, test_data)
