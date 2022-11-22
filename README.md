@@ -1,6 +1,6 @@
 # ML-Calculator
 
-A calculator that uses machine learning to predict answers. This application uses Tensorflow and Keras for machine learning. The front-end is a simple React app that sends a query to a Flask server through the server's API. 
+A calculator that uses machine learning to predict answers. This application uses TensorFlow and Keras for machine learning. The front-end is a simple React app that sends a query to a Flask server through the server's API. 
 
 ## Installation
 
@@ -11,13 +11,15 @@ conda create --name <env> --file requirements.txt
 ```
 To install the node packages, run `npm install` in the `/client/` folder.
 
+Note: Installing the requirements from `requirements.txt` installs `tensorflow-gpu`. If you do not have a TensorFlow compatiple GPU, you should install the non-GPU version of TensorFlow instead. Please refer to TensorFlow's documentation for more installation details. 
+
 ## Usage
 
 To start the flask server, simply run the `flask_server.py` by entering `python flask_server.py` in your command line. To start the React app, enter `npm start` in a separate command line window from the `/client/` folder. A new window should automatically open in your browser 
 
 ## Machine learning
 
-The machine learning models were created using the Keras API on top of Tensorflow. The pre-trained models for all operations are stored in `/machine-learning/models/` in the [SavedModel](https://www.tensorflow.org/guide/saved_model) format. You are free to create your own models for this application. Two scripts are included in the `/machine-learning/` folder to generate data and create/train a neural network. 
+The machine learning models were created using the Keras API on top of TensorFlow. The pre-trained models for all operations are stored in `/machine-learning/models/` in the [SavedModel](https://www.tensorflow.org/guide/saved_model) format. You are free to create your own models for this application. Two scripts are included in the `/machine-learning/` folder to generate data and create/train a neural network. 
 
 The models for all four operations (+,-,*,/) use linear regression to calculate weights. It's simply a sequential model with a normalization layer and a single Dense layer. 
 ```
