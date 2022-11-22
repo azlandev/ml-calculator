@@ -15,7 +15,7 @@ Note: Installing the requirements from `requirements.txt` installs `tensorflow-g
 
 ## Usage
 
-To start the flask server, simply run the `flask_server.py` by entering `python flask_server.py` in your command line. To start the React app, enter `npm start` in a separate command line window from the `/client/` folder. A new window should automatically open in your browser 
+To start the flask server, simply run the `flask_server.py` by entering `python flask_server.py` in your command line. To start the React app, enter `npm start` in a separate command line window from the `/client/` folder. A new window should automatically open in your browser.
 
 ## Machine learning
 
