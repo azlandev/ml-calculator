@@ -9,6 +9,7 @@ After downloading everything in this repository, Anaconda can be used to install
 ```
 conda create --name <env> --file requirements.txt
 ```
+To install the node packages, run `npm install` in the `/client/` folder.
 
 ## Usage
 
