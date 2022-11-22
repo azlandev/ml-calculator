@@ -67,3 +67,4 @@ When running the app locally, the server url must be included in `package.json` 
 "proxy": "http://127.0.0.1:5000/",
 ...
 ```
+![Alt text](client/public/example.png?raw=true)
